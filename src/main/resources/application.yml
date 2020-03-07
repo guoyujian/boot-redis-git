@@ -3,12 +3,12 @@ server:
 
 spring:
   redis:
-    host: "192.168.189.128"
-    password: "123"
+    host: 192.168.189.128
+    password: 123
     port: 6379
     jedis:
       pool:
         max-active: 10
         max-idle: 6
         min-idle: 2
-    timeout: "2000"
+    timeout: 2000
