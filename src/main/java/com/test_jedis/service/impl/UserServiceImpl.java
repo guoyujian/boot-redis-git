@@ -1,5 +1,6 @@
 package com.test_jedis.service.impl;
 
+import com.test_jedis.po.User;
 import com.test_jedis.service.UserService;
 import lombok.extern.java.Log;
 import org.slf4j.Logger;
@@ -8,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Classname UserServiceImpl
@@ -42,6 +46,40 @@ public class UserServiceImpl implements UserService {
         }
         jedis.close();
         return val;
-
     }
+
+    @Override
+    public User selectById(String id) {
+        User user = null;
+        String key ="user:"+id; // 实体类名：id
+        //得到jedis对象
+        Jedis jedis = jedisPool.getResource();
+
+        if(jedis.exists(key)){
+            logger.info("查询的时Redis数据");
+            Map<String, String> map = jedis.hgetAll(key);
+            user.setId(map.get("id"));
+            user.setName(map.get("name"));
+            user.setAge(Integer.parseInt(map.get("age")));
+        } else {
+            //…从Mysql中取数
+            user.setId("1");
+            user.setName("gyj");
+            user.setAge(25);
+            logger.info("查询的时MySql数据");
+            //存入Redis
+            Map<String, String> map = new HashMap<>();
+            map.put("id",user.getId());
+            map.put("name", user.getName());
+            map.put("age", user.getAge()+"");
+            jedis.hmset(key, map);
+            logger.info("存入Redis");
+        }
+
+        //关闭Jedis对象
+        jedis.close();
+
+        return user;
+    }
+
 }

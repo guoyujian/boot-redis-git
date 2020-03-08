@@ -1,5 +1,7 @@
 package com.test_jedis.service;
 
+import com.test_jedis.po.User;
+
 /**
  * @Classname UserService
  * @Description TODO
@@ -15,4 +17,13 @@ public interface UserService {
      * @return
      */
     public String getString(String key);
+
+    /**
+     * 操作Redis Hash类型
+     * 用户输入一个id，根据id查询用户信息，
+     * 先查redis，后查mysql，返回结果对象。
+     * @param id
+     * @return
+     */
+    public User selectById(String id);
 }
